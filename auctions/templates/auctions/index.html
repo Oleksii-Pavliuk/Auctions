@@ -1,6 +1,16 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
+    {% if categories %}
+    <h2>Categories</h2>
+    <ul class="nav">
+        {% for category in categories %}
+        <li class="nav-item">
+            <a class="nav-link" href="listings/{{category.name}}">{{category.name}}</a>
+        </li>
+        {% endfor %}
+    {% endif %}
+    </ul>   
     <h2>Active Listings</h2>
     {% for lot in lots %}
         {% if lot.active %}

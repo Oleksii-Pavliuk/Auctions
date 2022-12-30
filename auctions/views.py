@@ -6,8 +6,8 @@ from django.shortcuts import render
 from django.urls import reverse
 from django import forms
 import datetime
-
-from .models import User, Category,Lot
+#Models
+from .models import User, Category, Lot, Comment, Watchlist, Bid
 
 
 #List of categories
@@ -25,12 +25,27 @@ class Listing(forms.Form):
 
 #Index page
 def index(request):
+    if request.method == 'POST':
+        id = request.POST['id']
+        close = Lot.objects.get(pk = id)
+        
+        close.active = False
+        close.winner = Bid.objects.order_by('-price').first().user.username
+
     return render(request, "auctions/index.html",{
         'lots': Lot.objects.all(),
-        'path': 'auctions/'
+        'categories': Category.objects.all()
     })
 
 
+#Show listing from category
+def listings(request, name):
+    lots = Lot.objects.filter(category = Category.objects.get(name = name))
+
+    return render(request, "auctions/index.html",{
+        'lots': lots
+    })
+    
 
 #Create listing function
 @login_required
@@ -55,7 +70,7 @@ def create(request):
             new_lot.save()
             return HttpResponseRedirect(reverse('index'))
     else:
-        return render(request, 'auctions/listing.html', {
+        return render(request, 'auctions/create.html', {
             'form': Listing
         })
 
@@ -67,11 +82,80 @@ def listing(request):
 
     lot = Lot.objects.get(pk = id)
 
+    bids = Bid.objects.filter(lot = lot.id).order_by('-price')
+
+    comments = Comment.objects.filter(lot = lot.id).order_by('-date')
+
+
     return render(request, 'auctions/lot.html',{
-        'lot': lot
+        'lot': lot,
+        'bids': bids,
+        'comments': comments,
+        'name': str(lot.user)
     })
 
 
+#Watchlist function 
+@login_required
+def watchlist(request):
+   
+    user = User.objects.get(id = (request.user.id))
+
+    items = Watchlist.objects.filter(user = user).all()
+
+    data = []
+
+    for item in items:
+        data.append(Lot.objects.get(pk = item.item.id))
+
+    return render(request, 'auctions/watchlist.html',{
+        'data': data
+    })
+
+# Bid function
+@login_required
+def bid(request):
+    
+    id = request.POST['id']
+    price = request.POST['price']
+
+    bid = Bid(lot = Lot.objects.get(pk = id), user = User.objects.get(id = request.user.id), price = price)
+
+    top_bid = Bid.objects.filter(lot = id).order_by('-price').first()
+    if top_bid:
+        if int(price) > top_bid.price:
+            bid.save()
+        else:
+            return HttpResponse('Your bid is smalaer than current price/bid')
+    bid.save()
+    return HttpResponse('ok')
+
+#Add to watchlist and remove from watchlist functions 
+@login_required
+def watch(request):
+    if request.method == "POST":
+        id = request.POST['id']
+        try:
+            Watchlist.objects.filter(user = request.user.id).get(item = id).delete()
+        except:
+            item = Watchlist(user = User.objects.get(pk = request.user.id), item = Lot.objects.get(pk = id))
+            item.save()
+        return HttpResponse('ok')
+    elif request.method == 'GET':
+
+        id = request.GET['id']
+        Watchlist.objects.filter(user = request.user.id).get(item = id).delete()
+        return HttpResponse('ok')
+
+#Add new comment to listing
+@login_required
+def comment(request):
+    lot = request.GET['lot']
+    comment = request.GET['comment']
+
+    comment = Comment(user = User.objects.get(pk = request.user.id), lot = Lot.objects.get(pk = lot), comment = comment)
+    comment.save()
+    return HttpResponse('ok')
 
 
 

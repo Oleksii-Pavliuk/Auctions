@@ -1,12 +1,118 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
+
+
+<!-- Lot information -->
     <h2> {{lot.name}} </h2>
             <section>
                 <h4>{{lot.category}}</h4>
                 <img src="{{lot.image.url}}" alt="No image"  width="300px">
-                <p>Price: ${{ lot.price}} </p>
+                <p>Price: $<span class="price">{{ lot.price}} </span></p>
                 <p>{{lot.description}} </p>
-
+            {% if user.is_authenticated %}
+                <button onclick="add({{lot.id}})"  class="btn btn-primary">Add to watchlist</button>
+                <div>
+                    <h5>Bid: $<input id="bid-price" type="number" min="0"><button onclick="bid({{lot.id}})" class="btn btn-primary">Post bid</button></h5>
+                </div>
+            {% endif %}
             </section>
+            <hr>
+            {% if user.username == name %}
+                <form action="{% url 'index' %}" method="post">
+                    {%csrf_token%}
+                    <input type="hidden" name = 'iq' value="{{lot.id}}">
+                    <input type="submit" value="Delete listing">
+                </form>
+            {% endif %}
+
+
+<!-- Lot bids  -->
+            <h4 class="m-5">Bids</h4>
+            <section class="m-5">
+                {% for bid in bids %}
+                <div>
+                    <span class="m-5">$ {{bid.price}} </span>
+                    <span class="m-5"> {{bid.user}} </span>
+                </div>
+                {% endfor %}
+            </section>
+            <hr>
+
+
+<!-- Lot comments  -->
+            <h4>Comments</h4>
+            {% if user.is_authenticated %}
+            <p>New comment</p>
+                <textarea name="comment" id="new-comment" cols="30" rows="10"></textarea>
+                <button onclick="comment({{lot.id}})" class="btn btn-primary">Add comment</button>
+            {% endif %}    
+            <section>
+                {% for comment in comments %}
+                    <section>
+                        <h5>{{comment.user}} <span>{{comment.date}} </span></h5>
+                        <p>{{comment.comment}} </p>
+                    </section>
+                {% endfor %}
+            </section>
+
+
+
+
+          <script defer>
+                let price = document.querySelector('#bid-price')
+
+                price.min = parseInt(document.querySelector('.price').innerHTML)
+
+                //AJAX Request to add listing to watchlist
+                function add(id){
+                    $.ajax(
+                        {
+                            type:"POST",
+                            url: "{% url 'watch' %}",
+                            data: {
+                                csrfmiddlewaretoken: '{{csrf_token}}',
+                                id: id
+                            },
+                            success: function(data){
+                                alert(data)
+                            }
+                        }
+                    )
+                }
+                //AJAX request to bid on listing
+                function bid(id){
+                    $.ajax(
+                        {
+                            type:"POST",
+                            url: "{% url 'bid' %}",
+                            data: {
+                                csrfmiddlewaretoken: '{{csrf_token}}',
+                                id: id,
+                                price: price.value
+                            },
+                            success: function(data){
+                                alert(data)
+                            }
+                        }
+                    )
+                }
+                //AJAX request to bid on listing
+                function comment(id){
+                    $.ajax(
+                        {
+                            type:"GET",
+                            url: "{% url 'comment' %}",
+                            data: {
+                                lot: id,
+                                comment: document.querySelector('#new-comment').value
+                            },
+                            success: function(data){
+                                alert(data)
+                            }
+                        }
+                    )
+                }
+                
+            </script>
 {% endblock %}
