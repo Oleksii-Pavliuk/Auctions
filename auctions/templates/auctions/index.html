@@ -1,0 +1,19 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>Active Listings</h2>
+    {% for lot in lots %}
+        {% if lot.active %}
+            <section id="lot-{{lot.id}}">
+                <h2>{{ lot.name }}</h2><h5>{{lot.category}}</h5>
+                <img src="{{lot.image.url}}" alt="No image"  width="300px">
+                <p>Price: ${{ lot.price}} </p>
+                <p>{{lot.description}} </p>
+                <form action="{% url 'listing' %}" method="get">
+                    <input type="hidden" name="id" value="{{ lot.id }}">
+                    <input type="submit" class="btn btn-primary" value="View Listing">
+                </form>
+            </section>
+        {% endif %}
+    {% endfor %}
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2> {{lot.name}} </h2>
+            <section>
+                <h4>{{lot.category}}</h4>
+                <img src="{{lot.image.url}}" alt="No image"  width="300px">
+                <p>Price: ${{ lot.price}} </p>
+                <p>{{lot.description}} </p>
+
+            </section>
+{% endblock %}

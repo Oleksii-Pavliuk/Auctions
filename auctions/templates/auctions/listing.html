@@ -1,0 +1,21 @@
+{% extends "auctions/layout.html" %}
+{% block title %} New listing {% endblock %} 
+{% block body %}
+
+    <h2>Create new listing </h2>
+
+    {% if message %}
+        <div>{{ message }}</div>
+    {% endif %}
+
+    <form action="{% url 'create' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{form}}
+        <input type="file" name="image">
+        <p> Will be listed by {{ user.username }}</p>
+
+        <input type="submit" class="btn btn-primary">
+    </form>
+
+
+{% endblock %}
