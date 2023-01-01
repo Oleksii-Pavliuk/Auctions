@@ -1,3 +1,55 @@
 body {
     padding: 10px;
 }
+
+.nav-link{
+    font-size: 30px;
+}
+
+.content-login{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.form{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.form-top{
+    margin-bottom: -1px;
+
+    border-radius:  5px 5px 0px 0px;
+  }
+
+.form-mid{
+    margin-bottom: -1px;
+    border-radius: 0px;
+}
+
+.form-bot{
+    border-radius: 0px 0px 5px 5px;
+}
+
+#bid-price{
+    width: 200px;
+}
+
+#new-comment{
+    width: 100%;
+}
+
+
+
+.new-listing-form{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.new-listing-form input, textarea, select{
+    margin-bottom: 2vh;
+    width: 80%;
+}

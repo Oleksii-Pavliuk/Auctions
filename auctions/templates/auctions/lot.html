@@ -4,57 +4,79 @@
 
 
 <!-- Lot information -->
-    <h2> {{lot.name}} </h2>
-            <section>
-                <h4>{{lot.category}}</h4>
-                <img src="{{lot.image.url}}" alt="No image"  width="300px">
-                <p>Price: $<span class="price">{{ lot.price}} </span></p>
-                <p>{{lot.description}} </p>
-            {% if user.is_authenticated %}
-                <button onclick="add({{lot.id}})"  class="btn btn-primary">Add to watchlist</button>
-                <div>
-                    <h5>Bid: $<input id="bid-price" type="number" min="0"><button onclick="bid({{lot.id}})" class="btn btn-primary">Post bid</button></h5>
-                </div>
-            {% endif %}
-            </section>
-            <hr>
-            {% if user.username == name %}
-                <form action="{% url 'index' %}" method="post">
-                    {%csrf_token%}
-                    <input type="hidden" name = 'iq' value="{{lot.id}}">
-                    <input type="submit" value="Delete listing">
-                </form>
-            {% endif %}
 
+            <div class="container col-xxl-8 px-4 py-5">
+                <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
+                  <div class="col-10 col-sm-8 col-lg-6">
+                    <img src="{{lot.image.url}}" class="d-block mx-lg-auto img-fluid" alt="{{lot.name}}" width="700" height="500" loading="lazy">
+                  </div>
+                  <div class="col-lg-6">
+                    <h2 class="display-5 fw-bold lh-1 mb-3">{{lot.name}} </h2>
+                    <h4>Price: $<span class="price">{{ lot.price}} </span></h4>
+                    <p class="lead">{{lot.description}}</p>
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                        {% if user.is_authenticated %}
+                        <button onclick="add({{lot.id}})"  class="btn btn-outline-secondary">Add to watchlist</button>
+                        <div>
+                            <h5>Bid: $<input id="bid-price" type="number" min="0"></h5>
+                            <button onclick="bid({{lot.id}})" class="btn btn-primary w-100">Post bid</button>
+                        </div>
+                    {% endif %}
+                        <hr>
+                        {% if user.username == name %}
+                        <form action="{% url 'index' %}" method="post">
+                            {%csrf_token%}
+                            <input type="hidden" name = 'iq' value="{{lot.id}}">
+                            <input type="submit" value="Delete listing">
+                        </form>
+                        {% endif %}
+                    </div>
+                  </div>
+                </div>
+              </div>
 
 <!-- Lot bids  -->
-            <h4 class="m-5">Bids</h4>
+            <h3 class="m-5 text-center">Bids</h3>
             <section class="m-5">
-                {% for bid in bids %}
-                <div>
-                    <span class="m-5">$ {{bid.price}} </span>
-                    <span class="m-5"> {{bid.user}} </span>
-                </div>
-                {% endfor %}
+                <table class="table">
+                    <thead>
+                      <tr>
+                        <th scope="col">Bid</th>
+                        <th scope="col">User</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                        {% for bid in bids %}
+                            <tr>
+                                <th scope="row">$ {{bid.price}}</th>
+                                <td>{{bid.user}} </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                  </table>
             </section>
             <hr>
 
 
 <!-- Lot comments  -->
-            <h4>Comments</h4>
+            <h3 class="text-center">Comments</h3>
             {% if user.is_authenticated %}
             <p>New comment</p>
-                <textarea name="comment" id="new-comment" cols="30" rows="10"></textarea>
-                <button onclick="comment({{lot.id}})" class="btn btn-primary">Add comment</button>
+                <textarea name="comment" id="new-comment"  rows="10"></textarea>
+                <button onclick="comment({{lot.id}})" class="btn btn-primary mb-5 w-100">Add comment</button>
             {% endif %}    
             <section>
+                <h4>Comments</h4>
                 {% for comment in comments %}
-                    <section>
-                        <h5>{{comment.user}} <span>{{comment.date}} </span></h5>
-                        <p>{{comment.comment}} </p>
+                    <section class="border mt-5 mb-5">
+                        <h5 class="p-5">{{comment.user}} <span class="ms-3">{{comment.date}} </span></h5>
+                        <p class="ps-5">{{comment.comment}} </p>
                     </section>
                 {% endfor %}
             </section>
+
+
+
 
 
 

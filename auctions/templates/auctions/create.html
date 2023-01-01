@@ -2,13 +2,13 @@
 {% block title %} New listing {% endblock %} 
 {% block body %}
 
-    <h2>Create new listing </h2>
+    <h2 class="text-center mb-5">Create new listing </h2>
 
     {% if message %}
         <div>{{ message }}</div>
     {% endif %}
 
-    <form action="{% url 'create' %}" method="post" enctype="multipart/form-data">
+    <form action="{% url 'create' %}" method="post" class="new-listing-form" enctype="multipart/form-data">
         {% csrf_token %}
         {{form}}
         <input type="file" name="image">

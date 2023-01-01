@@ -5,17 +5,50 @@
 {% block body %}
     <h2>Watchlist</h2>
     {% for lot in data %}
-            <section id="lot-{{lot.id}}">
-                <h2>{{ lot.name }}</h2><h5>{{lot.category}}</h5>
-                <img src="{{lot.image.url}}" alt="No image"  width="300px">
-                <p>Price: ${{ lot.price}} </p>
-                <p>{{lot.description}} </p>
-                <form action="{% url 'listing' %}" method="get">
+            {% if lot.active %}
+            <div class="card mb-3" style="max-width: 100wv;">
+              <div class="row g-0">
+                <div class="col-md-4">
+                  <img img src="{{lot.image.url}}"  class="img-fluid rounded-start" alt="{{lot.name}}">
+                </div>
+                <div class="col-md-8">
+                  <div class="card-body">
+                      <h5 class="card-title fs-5">{{lot.name}}</h5>
+                      <h5>Price: ${{ lot.price}} </h5>
+                      <p class="card-text">{{ lot.description }}</p>
+                    <p class="card-text"><small class="text-muted">Active from {{lot.date}}</small></p>
+                    <form action="{% url 'listing' %}" method="get">
+                      <input type="hidden" name="id" value="{{ lot.id }}">
+                      <input type="submit" class="btn btn-primary inline" value="View Listing">
+                      <button onclick="remove({{lot.id}})" class="btn btn-primary">Remove from watchlist</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% else %}
+          <div class="card mb-3 text-bg-secondary" style="max-width: 100wv;">
+            <div class="row g-0">
+              <div class="col-md-4">
+                <img img src="{{lot.image.url}}"  class="img-fluid rounded-start" alt="{{lot.name}}">
+              </div>
+              <div class="col-md-8">
+                <div class="card-body">
+                    <h5 class="card-title fs-5">{{lot.name}}</h5>
+                    <h5>Price: ${{ lot.price}} </h5>
+                    <p class="card-text">{{ lot.description }}</p>
+                  <p class="card-text"><small class="text-muted">Sold</small></p>
+                  <form action="{% url 'listing' %}" method="get">
                     <input type="hidden" name="id" value="{{ lot.id }}">
-                    <input type="submit" class="btn btn-primary" value="View Listing">
-                </form>
-                <button onclick="remove({{lot.id}})" class="btn btn-primary">Remove from watchlist</button>
-            </section>
+                    <input type="submit" class="btn btn-primary inline " value="View Listing">
+                    <button onclick="remove({{lot.id}})" class="btn btn-primary">Remove from watchlist</button>
+                  </form>
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endif %}
     {% endfor %}
     <script defer>
         function remove(id){
