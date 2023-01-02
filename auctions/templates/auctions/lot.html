@@ -17,16 +17,22 @@
                     <div class="d-grid gap-2 d-md-flex justify-content-md-start">
                         {% if user.is_authenticated %}
                         <button onclick="add({{lot.id}})"  class="btn btn-outline-secondary">Add to watchlist</button>
+                        {% if lot.active %}
                         <div>
                             <h5>Bid: $<input id="bid-price" type="number" min="0"></h5>
                             <button onclick="bid({{lot.id}})" class="btn btn-primary w-100">Post bid</button>
                         </div>
-                    {% endif %}
+                        {% else %}
+                        <div>
+                            <h5 class="m-1">Winner : {{lot.winner}}</h5>
+                        </div>
+                        {%endif%}
+                        {% endif %}
                         <hr>
                         {% if user.username == name %}
                         <form action="{% url 'index' %}" method="post">
                             {%csrf_token%}
-                            <input type="hidden" name = 'iq' value="{{lot.id}}">
+                            <input type="hidden" name = 'id' value="{{lot.id}}">
                             <input type="submit" value="Delete listing">
                         </form>
                         {% endif %}
@@ -51,6 +57,11 @@
                                 <th scope="row">$ {{bid.price}}</th>
                                 <td>{{bid.user}} </td>
                             </tr>
+                            {%empty%}
+                                <tr>
+                                    <td>No bids yet</td>
+                                    <td>No bids yet</td>
+                                </tr>
                         {% endfor %}
                     </tbody>
                   </table>
@@ -72,7 +83,10 @@
                         <h5 class="p-5">{{comment.user}} <span class="ms-3">{{comment.date}} </span></h5>
                         <p class="ps-5">{{comment.comment}} </p>
                     </section>
+                    {%empty%}
+                    <p class="text-center mb-">No comments yet</p>
                 {% endfor %}
+
             </section>
 
 

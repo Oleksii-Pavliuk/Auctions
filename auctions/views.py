@@ -30,7 +30,8 @@ def index(request):
         close = Lot.objects.get(pk = id)
         
         close.active = False
-        close.winner = Bid.objects.order_by('-price').first().user.username
+        close.winner = Bid.objects.filter(lot = close).order_by('-price').first().user.username
+        close.save()
 
     return render(request, "auctions/index.html",{
         'lots': Lot.objects.all(),
